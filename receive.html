@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Files — Sharekit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0f0f5;--muted:#8888a0;--accent:#6c63ff;--accent2:#a78bfa;--green:#22d3a0}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+    nav{padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(10,10,15,0.97)}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.03em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+    .logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px var(--accent)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0.6rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;text-decoration:none;transition:all 0.2s;border:none}
+    .btn-primary{background:var(--accent);color:#fff;box-shadow:0 0 20px rgba(108,99,255,0.3)}
+    .btn-primary:hover{background:#7c74ff;transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+    .btn-ghost:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+    .btn-lg{padding:0.9rem 2rem;font-size:1rem}
+    .page{flex:1;max-width:600px;margin:0 auto;width:100%;padding:3rem 1.5rem}
+    .requester-card{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:1.8rem;margin-bottom:2rem;display:flex;align-items:center;gap:16px}
+    .requester-avatar{width:52px;height:52px;border-radius:50%;background:rgba(108,99,255,0.2);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--accent2);flex-shrink:0;border:1px solid rgba(108,99,255,0.3)}
+    .requester-info h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:0.2rem}
+    .requester-info p{color:var(--muted);font-size:0.85rem}
+    .subject-box{background:rgba(108,99,255,0.07);border:1px solid rgba(108,99,255,0.2);border-radius:12px;padding:1rem 1.2rem;margin-bottom:2rem}
+    .subject-box .label{font-size:0.75rem;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.08em}
+    .subject-box .subject{font-size:0.95rem;color:var(--text)}
+    .drop-zone{border:2px dashed var(--border2);border-radius:20px;padding:3rem 2rem;text-align:center;cursor:pointer;transition:all 0.3s;background:var(--bg2);margin-bottom:1.5rem}
+    .drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:rgba(108,99,255,0.05)}
+    .dz-icon{font-size:2.5rem;margin-bottom:0.8rem}
+    .dz-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:0.3rem}
+    .dz-sub{color:var(--muted);font-size:0.82rem}
+    #fileInput{display:none}
+    .file-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
+    .file-item{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 16px}
+    .file-emoji{font-size:1.4rem;flex-shrink:0}
+    .file-info{flex:1;min-width:0}
+    .file-name{font-size:0.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .file-size{font-size:0.75rem;color:var(--muted)}
+    .file-prog{height:3px;border-radius:100px;background:var(--bg3);margin-top:5px;display:none;overflow:hidden}
+    .file-prog-bar{height:100%;border-radius:100px;background:var(--accent);transition:width 0.3s}
+    .file-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:4px;flex-shrink:0}
+    .file-remove:hover{color:#f87171}
+    .overall-prog{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.2rem;margin-bottom:1.5rem;display:none}
+    .overall-prog h4{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:0.8rem}
+    .prog-wrap{height:8px;background:var(--bg3);border-radius:100px;overflow:hidden;margin-bottom:0.5rem}
+    .prog-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;transition:width 0.4s;width:0%}
+    .prog-lbl{font-size:0.82rem;color:var(--muted)}
+    .success-card{display:none;text-align:center;padding:3rem 2rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px}
+    .success-card.show{display:block}
+    .success-icon{font-size:3rem;margin-bottom:1rem}
+    .success-card h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:0.5rem}
+    .success-card p{color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem}
+    .alert{border-radius:10px;padding:10px 14px;font-size:0.85rem;margin-bottom:1rem;display:none}
+    .alert.show{display:block}
+    .alert-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    footer{border-top:1px solid var(--border);padding:1.2rem 2rem;text-align:center;font-size:0.8rem;color:var(--muted)}
+    footer a{color:var(--accent2);text-decoration:none;margin:0 6px}
+    @media(max-width:540px){.page{padding:2rem 1rem}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span class="logo-dot"></span>Sharekit</a>
+    <a href="upload.html" class="btn btn-ghost" style="font-size:0.82rem;">⬆ Share your own files</a>
+  </nav>
+
+  <div class="page">
+    <!-- REQUESTER INFO -->
+    <div class="requester-card" id="requesterCard">
+      <div class="requester-avatar" id="requesterInitials">?</div>
+      <div class="requester-info">
+        <h2 id="requesterName">Loading…</h2>
+        <p id="requesterDesc">Someone is requesting files from you via Sharekit</p>
+      </div>
+    </div>
+
+    <!-- SUBJECT -->
+    <div class="subject-box" id="subjectBox" style="display:none">
+      <div class="label">They are requesting</div>
+      <div class="subject" id="subjectText"></div>
+    </div>
+
+    <div class="alert alert-error" id="mainError"></div>
+
+    <!-- DROP ZONE -->
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" multiple/>
+      <div class="dz-icon">📤</div>
+      <div class="dz-title">Drop files here or click to browse</div>
+      <div class="dz-sub">Upload the files they requested · All file types accepted</div>
+    </div>
+
+    <!-- FILE LIST -->
+    <div class="file-list" id="fileList"></div>
+
+    <!-- PROGRESS -->
+    <div class="overall-prog" id="overallProg">
+      <h4 id="progTitle">Uploading your files…</h4>
+      <div class="prog-wrap"><div class="prog-bar" id="progBar"></div></div>
+      <p class="prog-lbl" id="progLbl">Starting…</p>
+    </div>
+
+    <!-- SEND BUTTON -->
+    <div id="sendAction" style="display:none">
+      <button class="btn btn-primary btn-lg" id="sendBtn" onclick="startUpload()" style="width:100%;border-radius:14px">📤 Send files</button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-card" id="successCard">
+      <div class="success-icon">✅</div>
+      <h3>Files sent successfully!</h3>
+      <p id="successMsg">Your files have been uploaded and the requester has been notified.</p>
+      <a href="index.html" class="btn btn-ghost">Go to Sharekit</a>
+    </div>
+  </div>
+
+  <footer>
+    <a href="index.html">Sharekit</a> · Secure file sharing ·
+    <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+  </footer>
+
+  <script src="https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
+  <script>
+    const FILESTACK_KEY = 'Ahlx2i5waRYayFFIJaRCpz';
+    const SITE_URL = 'https://sharekit.in';
+    let selectedFiles = [];
+
+    // Parse URL params
+    const params = new URLSearchParams(window.location.search);
+    const forName  = params.get('for')  || 'Someone';
+    const token    = params.get('token') || '';
+    const subject  = params.get('subject') || '';
+
+    // Setup requester info
+    const initials = forName.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0,2) || '?';
+    document.getElementById('requesterInitials').textContent = initials;
+    document.getElementById('requesterName').textContent = forName + ' is requesting files';
+    document.getElementById('requesterDesc').textContent = 'Upload your files below and click Send. No account needed.';
+
+    if (subject) {
+      document.getElementById('subjectBox').style.display = 'block';
+      document.getElementById('subjectText').textContent = subject;
+    }
+
+    function getEmoji(n) {
+      const e=(n||'').split('.').pop().toLowerCase(),m={jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🖼️',heic:'🖼️',webp:'🖼️',mp4:'🎬',mkv:'🎬',avi:'🎬',mov:'🎬',mp3:'🎵',wav:'🎵',aac:'🎵',m4a:'🎵',pdf:'📄',doc:'📄',docx:'📄',ppt:'📄',xls:'📄',xlsx:'📄',txt:'📄',zip:'🗜️',rar:'🗜️','7z':'🗜️',apk:'📱'};
+      return m[e]||'📎';
+    }
+    function fmtSize(b){if(!b)return'0 B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+
+    function render() {
+      const list = document.getElementById('fileList');
+      list.innerHTML = '';
+      selectedFiles.forEach((f,i) => {
+        const el = document.createElement('div');
+        el.className = 'file-item'; el.id = 'fi'+i;
+        el.innerHTML = `<span class="file-emoji">${getEmoji(f.name)}</span><div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${fmtSize(f.size)}</div><div class="file-prog" id="fp${i}"><div class="file-prog-bar" id="fb${i}" style="width:0%"></div></div></div><button class="file-remove" onclick="removeFile(${i})">✕</button>`;
+        list.appendChild(el);
+      });
+      document.getElementById('sendAction').style.display = selectedFiles.length > 0 ? 'block' : 'none';
+    }
+
+    function removeFile(i) { selectedFiles.splice(i,1); render(); }
+
+    function addFiles(files) {
+      selectedFiles = [...selectedFiles, ...Array.from(files)];
+      render();
+    }
+
+    document.getElementById('fileInput').addEventListener('change', function(){ addFiles(this.files); this.value=''; });
+    const dz = document.getElementById('dropZone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); addFiles(e.dataTransfer.files); });
+
+    async function startUpload() {
+      if (!selectedFiles.length) return;
+      const btn  = document.getElementById('sendBtn');
+      const prog = document.getElementById('overallProg');
+      const bar  = document.getElementById('progBar');
+      const lbl  = document.getElementById('progLbl');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>&nbsp;Uploading…';
+      prog.style.display = 'block';
+      document.getElementById('mainError').className = 'alert';
+
+      const client = filestack.init(FILESTACK_KEY);
+      const handles = [];
+
+      try {
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const f = selectedFiles[i];
+          lbl.textContent = `Uploading ${i+1} of ${selectedFiles.length}: ${f.name}`;
+          document.getElementById('fp'+i).style.display = 'block';
+          const result = await client.upload(f, {
+            onProgress: ({totalPercent:p}) => {
+              document.getElementById('fb'+i).style.width = p+'%';
+              bar.style.width = Math.round((i/selectedFiles.length + p/100/selectedFiles.length)*100)+'%';
+            }
+          });
+          handles.push(result.handle);
+          document.getElementById('fb'+i).style.background = 'var(--green)';
+        }
+        bar.style.width = '100%'; lbl.textContent = 'Complete!';
+
+        setTimeout(() => {
+          prog.style.display = 'none';
+          document.getElementById('dropZone').style.display = 'none';
+          document.getElementById('fileList').style.display = 'none';
+          document.getElementById('sendAction').style.display = 'none';
+          document.getElementById('subjectBox').style.display = 'none';
+          document.getElementById('successMsg').textContent = `${selectedFiles.length} file${selectedFiles.length>1?'s':''} sent to ${forName} successfully!`;
+          document.getElementById('successCard').classList.add('show');
+        }, 500);
+
+      } catch (err) {
+        console.error(err);
+        prog.style.display = 'none';
+        btn.disabled = false; btn.textContent = '📤 Send files';
+        const e = document.getElementById('mainError');
+        e.textContent = 'Upload failed: ' + (err.message || 'Please check your connection and try again.');
+        e.className = 'alert alert-error show';
+      }
+    }
+  </script>
+</body>
+</html>

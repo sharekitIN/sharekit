@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sharekit — Share Files Instantly & Securely</title>
+  <meta name="description" content="Fast, secure wireless file sharing for everyone. Send images, videos, music, docs and more from any device — free forever." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --bg2: #111118; --bg3: #18181f;
+      --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+      --text: #f0f0f5; --muted: #8888a0;
+      --accent: #6c63ff; --accent2: #a78bfa;
+      --green: #22d3a0; --orange: #f97316;
+      --card-bg: rgba(255,255,255,0.03);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; opacity: 0.4; }
+    .blob { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .blob-1 { width: 600px; height: 600px; background: rgba(108,99,255,0.12); top: -200px; left: -100px; }
+    .blob-2 { width: 500px; height: 500px; background: rgba(34,211,160,0.08); bottom: 100px; right: -100px; }
+    .blob-3 { width: 400px; height: 400px; background: rgba(249,115,22,0.06); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(10,10,15,0.85); backdrop-filter: blur(20px); }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.03em; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 12px var(--accent); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.8)} }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 0.6rem 1.4rem; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.9rem; cursor: pointer; text-decoration: none; transition: all 0.2s; border: none; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
+    .btn-ghost:hover { background: var(--card-bg); color: var(--text); }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 0 24px rgba(108,99,255,0.35); }
+    .btn-primary:hover { background: #7c74ff; box-shadow: 0 0 32px rgba(108,99,255,0.5); transform: translateY(-1px); }
+    .btn-large { padding: 0.9rem 2rem; font-size: 1rem; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+    .btn-outline:hover { background: var(--card-bg); border-color: rgba(255,255,255,0.2); }
+
+    /* HERO */
+    main { position: relative; z-index: 1; }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8rem 2rem 4rem; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.25); border-radius: 100px; font-size: 0.8rem; font-weight: 500; color: var(--accent2); margin-bottom: 2rem; animation: fadeUp 0.6s ease both; }
+    .hero-badge span { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; }
+    .hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(2.8rem,7vw,5.5rem); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; animation: fadeUp 0.6s 0.1s ease both; }
+    .hero h1 em { font-style: normal; background: linear-gradient(135deg, var(--accent2) 0%, var(--green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { max-width: 580px; color: var(--muted); font-size: 1.1rem; font-weight: 300; margin-bottom: 2.5rem; animation: fadeUp 0.6s 0.2s ease both; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 4rem; animation: fadeUp 0.6s 0.3s ease both; }
+    .upload-zone { width: 100%; max-width: 640px; background: var(--bg2); border: 1.5px dashed var(--border2); border-radius: 20px; padding: 3rem 2rem; cursor: pointer; transition: all 0.3s; animation: fadeUp 0.6s 0.4s ease both; position: relative; overflow: hidden; }
+    .upload-zone::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(108,99,255,0.03) 0%,transparent 60%); pointer-events: none; }
+    .upload-zone:hover { border-color: var(--accent); background: rgba(108,99,255,0.04); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .upload-zone.drag-over { border-color: var(--green); background: rgba(34,211,160,0.04); }
+    .upload-icon { width: 64px; height: 64px; background: rgba(108,99,255,0.12); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-size: 1.8rem; }
+    .upload-zone h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; margin-bottom: 0.4rem; }
+    .upload-zone p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem; }
+    .file-types { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .file-tag { padding: 4px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 100px; font-size: 0.75rem; color: var(--muted); }
+    #fileInput { display: none; }
+
+    /* STATS */
+    .stats-bar { display: flex; align-items: center; justify-content: center; gap: 3rem; padding: 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--card-bg); flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.8rem; letter-spacing: -0.03em; }
+    .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    /* SECTIONS */
+    .section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: 0.8rem; font-weight: 500; color: var(--accent2); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+    .section-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(2rem,4vw,3rem); letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1rem; }
+    .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 500px; font-weight: 300; margin-bottom: 3.5rem; }
+
+    /* FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 1.5px; background: var(--border); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .feature-card { background: var(--bg); padding: 2rem; transition: background 0.2s; }
+    .feature-card:hover { background: var(--bg2); }
+    .feature-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.2rem; }
+    .fi-purple{background:rgba(108,99,255,0.12)} .fi-green{background:rgba(34,211,160,0.12)} .fi-orange{background:rgba(249,115,22,0.12)} .fi-pink{background:rgba(236,72,153,0.12)} .fi-blue{background:rgba(59,130,246,0.12)} .fi-yellow{background:rgba(234,179,8,0.12)}
+    .feature-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* HOW IT WORKS */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 2rem; }
+    .step { padding: 2rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; transition: border-color 0.2s, transform 0.2s; }
+    .step:hover { border-color: var(--border2); transform: translateY(-4px); }
+    .step-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem; color: rgba(108,99,255,0.15); line-height: 1; margin-bottom: 1rem; }
+    .step h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+    .step p { color: var(--muted); font-size: 0.88rem; }
+
+    /* PRICING */
+    .billing-toggle { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 2.5rem; }
+    .toggle-track { width: 48px; height: 26px; background: var(--accent); border-radius: 100px; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+    .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.25s; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; align-items: start; }
+    .plan-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; position: relative; transition: border-color 0.2s, transform 0.2s; }
+    .plan-card:hover { transform: translateY(-4px); border-color: var(--border2); }
+    .plan-card.popular { border-color: var(--accent); background: linear-gradient(145deg,rgba(108,99,255,0.08) 0%,var(--bg2) 100%); }
+    .popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 600; padding: 4px 14px; border-radius: 100px; letter-spacing: 0.05em; white-space: nowrap; }
+    .plan-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .plan-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .plan-price { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.8rem; letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.3rem; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--muted); letter-spacing: 0; }
+    .plan-period { color: var(--muted); font-size: 0.82rem; margin-bottom: 1.5rem; min-height: 2.4em; }
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.8rem; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.88rem; color: var(--muted); }
+    .plan-features li .check { color: var(--green); font-size: 0.9rem; flex-shrink: 0; margin-top: 2px; }
+    .plan-features li .lock { color: var(--accent2); font-size: 0.9rem; flex-shrink: 0; margin-top: 2px; }
+
+    /* LANGUAGES */
+    .lang-marquee { overflow: hidden; padding: 2rem 0; position: relative; }
+    .lang-marquee::before,.lang-marquee::after { content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2; pointer-events: none; }
+    .lang-marquee::before { left: 0; background: linear-gradient(to right,var(--bg),transparent); }
+    .lang-marquee::after { right: 0; background: linear-gradient(to left,var(--bg),transparent); }
+    .lang-track { display: flex; gap: 1.5rem; width: max-content; animation: marquee 30s linear infinite; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .lang-pill { padding: 6px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 100px; font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+
+    /* SECURITY */
+    .security-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 1.5rem; }
+    .security-item { display: flex; align-items: flex-start; gap: 14px; padding: 1.5rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; }
+    .security-item .icon { font-size: 1.4rem; flex-shrink: 0; }
+    .security-item h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .security-item p { color: var(--muted); font-size: 0.82rem; }
+
+    /* CTA */
+    .cta-section { padding: 6rem 2rem; text-align: center; }
+    .cta-card { max-width: 700px; margin: 0 auto; padding: 4rem 3rem; background: var(--bg2); border: 1px solid var(--border2); border-radius: 28px; position: relative; overflow: hidden; }
+    .cta-card::before { content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 300px; height: 200px; background: rgba(108,99,255,0.15); filter: blur(60px); pointer-events: none; }
+    .cta-card h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(1.8rem,4vw,2.8rem); letter-spacing: -0.03em; margin-bottom: 1rem; }
+    .cta-card p { color: var(--muted); margin-bottom: 2rem; font-weight: 300; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 3rem 2rem; display: grid; grid-template-columns: 1fr auto; gap: 2rem; max-width: 1100px; margin: 0 auto; align-items: start; }
+    .footer-brand p { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; max-width: 280px; }
+    .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .footer-col h5 { font-size: 0.8rem; font-weight: 600; color: var(--text); margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .footer-col a { display: block; color: var(--muted); font-size: 0.85rem; text-decoration: none; margin-bottom: 0.5rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; max-width: 1100px; margin: 0 auto; }
+
+    /* ── SEND / RECEIVE SWITCH PANEL ── */
+    .sr-panel { width: 100%; max-width: 620px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 24px; overflow: hidden; animation: fadeUp 0.6s 0.4s ease both; box-shadow: 0 32px 80px rgba(0,0,0,0.5); }
+
+    .sr-tabs { display: flex; border-bottom: 1px solid var(--border); }
+    .sr-tab { flex: 1; padding: 1rem 1.5rem; background: transparent; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .sr-tab:first-child { border-right: 1px solid var(--border); }
+    .sr-tab:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+    .sr-tab.active { background: rgba(108,99,255,0.1); color: var(--accent2); font-weight: 600; }
+    .sr-tab-icon { font-size: 1rem; }
+
+    .sr-body { padding: 1.8rem; }
+
+    .sr-drop { border: 2px dashed var(--border2); border-radius: 16px; padding: 2.2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; position: relative; }
+    .sr-drop:hover { border-color: var(--accent); background: rgba(108,99,255,0.04); }
+    .sr-drop.drag-over { border-color: var(--green); background: rgba(34,211,160,0.04); }
+    .sr-drop-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
+    .sr-drop-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 0.35rem; }
+    .sr-drop-sub { color: var(--muted); font-size: 0.82rem; }
+    #fileInput { display: none; }
+
+    .sr-file-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 1.2rem; }
+
+    .sr-main-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 0.95rem; background: var(--accent); color: #fff; border: none; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; transition: all 0.2s; box-shadow: 0 0 24px rgba(108,99,255,0.3); }
+    .sr-main-btn:hover { background: #7c74ff; transform: translateY(-1px); box-shadow: 0 0 32px rgba(108,99,255,0.5); }
+
+    /* RECEIVE PANEL */
+    .sr-receive-info { text-align: center; margin-bottom: 1.4rem; }
+    .sr-receive-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .sr-receive-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 0.4rem; }
+    .sr-receive-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.6; max-width: 400px; margin: 0 auto; }
+
+    .sr-receive-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.2rem; }
+    .sr-form-row { width: 100%; }
+    .sr-input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 0.7rem 1rem; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+    .sr-input:focus { border-color: var(--accent); }
+    .sr-textarea { resize: none; }
+
+    .sr-receive-result { background: rgba(34,211,160,0.07); border: 1px solid rgba(34,211,160,0.2); border-radius: 12px; padding: 1rem; margin-top: 1rem; }
+    .sr-result-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .sr-result-row { display: flex; gap: 8px; align-items: center; margin-bottom: 0.5rem; }
+    .sr-result-url { flex: 1; font-size: 0.82rem; color: var(--green); word-break: break-all; }
+    .sr-copy-btn { background: var(--green); color: #0a0a0f; border: none; border-radius: 8px; padding: 5px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+    .sr-copy-btn:hover { background: #1ab88a; }
+    .sr-result-note { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── END SEND/RECEIVE ── */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .stats-bar { gap: 1.5rem; }
+      footer { grid-template-columns: 1fr; }
+      .cta-card { padding: 2.5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav>
+    <a href="index.html" class="logo"><span class="logo-dot"></span>Sharekit</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#languages">Languages</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="login.html" class="btn btn-ghost">Log in</a>
+      <a href="signup.html" class="btn btn-primary">Get started free</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge"><span></span> Wireless file sharing — works on any device</div>
+      <h1>Share any file.<br /><em>Instantly. Securely.</em></h1>
+      <p class="hero-sub">Transfer images, videos, music, docs and more between any device — no cables, no apps, no hassle.</p>
+
+      <!-- ── SEND / RECEIVE SWITCH PANEL ── -->
+      <div class="sr-panel" id="srPanel">
+
+        <!-- TAB SWITCHER -->
+        <div class="sr-tabs">
+          <button class="sr-tab active" id="tabSend" onclick="switchTab('send')">
+            <span class="sr-tab-icon">⬆</span> Send files
+          </button>
+          <button class="sr-tab" id="tabReceive" onclick="switchTab('receive')">
+            <span class="sr-tab-icon">⬇</span> Receive files
+          </button>
+        </div>
+
+        <!-- SEND PANEL -->
+        <div class="sr-body" id="panelSend">
+          <div class="sr-drop" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" multiple onchange="handleFiles(this.files)" />
+            <div class="sr-drop-icon">📁</div>
+            <div class="sr-drop-title">Drop files here or click to browse</div>
+            <div class="sr-drop-sub">3 GB free per month · No account needed · All file types</div>
+          </div>
+          <div class="sr-file-tags">
+            <span class="file-tag">📷 Images</span>
+            <span class="file-tag">🎬 Videos</span>
+            <span class="file-tag">🎵 Audio</span>
+            <span class="file-tag">📄 Docs</span>
+            <span class="file-tag">🗜️ Zips</span>
+            <span class="file-tag">📱 APKs</span>
+          </div>
+          <a href="upload.html" class="sr-main-btn">
+            ⬆ Start sending files free →
+          </a>
+        </div>
+
+        <!-- RECEIVE PANEL -->
+        <div class="sr-body" id="panelReceive" style="display:none;">
+          <div class="sr-receive-info">
+            <div class="sr-receive-icon">📥</div>
+            <div class="sr-receive-title">Request files from anyone</div>
+            <div class="sr-receive-desc">Create a secure upload link and send it to anyone. They upload files directly to you — no account needed on their end.</div>
+          </div>
+          <div class="sr-receive-form">
+            <div class="sr-form-row">
+              <input type="email" id="receiveEmail" placeholder="Your email address" class="sr-input" />
+            </div>
+            <div class="sr-form-row">
+              <input type="text" id="receiveName" placeholder="Your name (so senders know who it's for)" class="sr-input" />
+            </div>
+            <div class="sr-form-row">
+              <input type="text" id="receiveSubject" placeholder="Subject (what you are requesting)" class="sr-input" />
+            </div>
+            <div class="sr-form-row">
+              <textarea id="receiveMessage" placeholder="Message to sender (optional)" class="sr-input sr-textarea" rows="2"></textarea>
+            </div>
+          </div>
+          <button class="sr-main-btn" onclick="createReceiveLink()">
+            📥 Create receive link →
+          </button>
+          <div class="sr-receive-result" id="receiveResult" style="display:none;">
+            <div class="sr-result-label">Your secure upload link is ready:</div>
+            <div class="sr-result-row">
+              <span class="sr-result-url" id="receiveUrl"></span>
+              <button class="sr-copy-btn" id="receiveCopyBtn" onclick="copyReceiveLink()">Copy</button>
+            </div>
+            <div class="sr-result-note">Share this link with anyone. They can upload files directly to you.</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- END PANEL -->
+
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Languages supported</div></div>
+      <div class="stat"><div class="stat-num">500 GB</div><div class="stat-label">Max monthly (Pro)</div></div>
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">Simultaneous devices</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">End-to-end encrypted</div></div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="section fade-up" id="features">
+      <p class="section-label">What you get</p>
+      <h2 class="section-title">Everything you need — nothing you don't</h2>
+      <p class="section-sub">Built for real people. Simple, fast, and always secure.</p>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon fi-purple">📲</div><h3>Any device, any platform</h3><p>Works in your browser on Android, iPhone, Windows, Mac — no app install needed. Just open and share.</p></div>
+        <div class="feature-card"><div class="feature-icon fi-green">▶</div><h3>Resume interrupted transfers</h3><p>Lost your connection? No problem. Sharekit picks up exactly where it left off — no need to start over.</p></div>
+        <div class="feature-card"><div class="feature-icon fi-orange">🎥</div><h3>Send large files</h3><p>Photos, 4K videos, music albums, APKs, documents — send anything up to 500 GB on Pro plans.</p></div>
+        <div class="feature-card"><div class="feature-icon fi-pink">🔒</div><h3>Password-protected links</h3><p>Add a password so only the right person can access your files. Available on Pro and Unlimited plans.</p></div>
+        <div class="feature-card"><div class="feature-icon fi-blue">📂</div><h3>File categories</h3><p>Files are automatically sorted into Images, Videos, Audio, Docs — easy to find and share.</p></div>
+        <div class="feature-card"><div class="feature-icon fi-yellow">⚡</div><h3>Shareable links &amp; email</h3><p>Send files via email or generate a shareable link. Request files from others with a secure upload link.</p></div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section fade-up" id="how-it-works">
+      <p class="section-label">Simple process</p>
+      <h2 class="section-title">Up and running in 3 steps</h2>
+      <p class="section-sub">No tutorials, no manuals. Just upload and share.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><h3>Select your files</h3><p>Click to select or drag and drop files directly onto Sharekit. Any type, any size within your plan.</p></div>
+        <div class="step"><div class="step-num">02</div><h3>Choose how to send</h3><p>Send via email to your contacts, or get a customizable shareable link. Set a password or expiry if needed.</p></div>
+        <div class="step"><div class="step-num">03</div><h3>Transfer and done</h3><p>Click Transfer — your files upload instantly. Recipients get notified and can download from anywhere.</p></div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section fade-up" id="pricing">
+      <p class="section-label">Pricing</p>
+      <h2 class="section-title">Start free, scale when ready</h2>
+      <p class="section-sub">No credit card needed. Upgrade any time. Pay via UPI, cards, PhonePe, Paytm &amp; more.</p>
+
+      <div class="billing-toggle">
+        <span id="lbl-monthly" style="font-size:0.9rem;font-weight:500;color:var(--text);">Monthly</span>
+        <div class="toggle-track" id="billingToggle" onclick="toggleBilling()">
+          <div class="toggle-thumb" id="toggleThumb"></div>
+        </div>
+        <span id="lbl-yearly" style="font-size:0.9rem;font-weight:500;color:var(--muted);">
+          Yearly <span style="background:rgba(34,211,160,0.15);color:var(--green);font-size:0.72rem;padding:2px 8px;border-radius:100px;margin-left:4px;">Save up to 27%</span>
+        </span>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- FREE -->
+        <div class="plan-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-desc">Perfect for occasional sharing</div>
+          <div class="plan-price">₹0 <span>/ month</span></div>
+          <div class="plan-period">Free forever · No card needed</div>
+          <hr class="plan-divider" />
+          <ul class="plan-features">
+            <li><span class="check">✓</span> 3 GB / month transfer</li>
+            <li><span class="check">✓</span> 10 images, 10 videos per month</li>
+            <li><span class="check">✓</span> 10 audio, 5 documents per month</li>
+            <li><span class="check">✓</span> 5 compressed files, 1 APK/month</li>
+            <li><span class="check">✓</span> 3-day link expiry</li>
+            <li><span class="check">✓</span> Works on all devices</li>
+          </ul>
+          <a href="signup.html" class="btn btn-outline" style="width:100%;justify-content:center;padding:0.75rem;">Get started free</a>
+        </div>
+
+        <!-- PRO -->
+        <div class="plan-card popular">
+          <div class="popular-badge">MOST POPULAR</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-desc">For power users who share daily</div>
+          <div class="plan-price" id="pro-price">₹399 <span>/ month</span></div>
+          <div class="plan-period" id="pro-period">Billed monthly &nbsp;·&nbsp; <a href="https://payments.cashfree.com/forms/sharekit-pro-yearly" target="_blank" style="color:var(--green);text-decoration:none;">Save ₹1,289 yearly →</a></div>
+          <hr class="plan-divider" />
+          <ul class="plan-features">
+            <li><span class="check">✓</span> 500 GB / month transfer</li>
+            <li><span class="check">✓</span> 10,000 images &amp; videos/month</li>
+            <li><span class="check">✓</span> 10,000 audio, 5,000 docs/month</li>
+            <li><span class="check">✓</span> 100 APK transfers/month</li>
+            <li><span class="check">✓</span> 30-day link expiry</li>
+            <li><span class="lock">🔒</span> Password-protected transfers</li>
+          </ul>
+          <a id="pro-btn" href="https://payments.cashfree.com/forms?code=sharekit-pro-monthly" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.75rem;">Get Pro — ₹399/month</a>
+        </div>
+
+        <!-- UNLIMITED -->
+        <div class="plan-card">
+          <div class="plan-name">Unlimited</div>
+          <div class="plan-desc">For companies &amp; teams</div>
+          <div class="plan-price" id="unl-price">₹999 <span>/ month</span></div>
+          <div class="plan-period" id="unl-period">Billed monthly &nbsp;·&nbsp; <a href="https://payments.cashfree.com/forms/sharekit-unlimited-yearly" target="_blank" style="color:var(--green);text-decoration:none;">Save ₹2,989 yearly →</a></div>
+          <hr class="plan-divider" />
+          <ul class="plan-features">
+            <li><span class="check">✓</span> No limits on transfer size</li>
+            <li><span class="check">✓</span> Unlimited transfers, all file types</li>
+            <li><span class="check">✓</span> No link expiry — ever</li>
+            <li><span class="lock">🔒</span> Password-protected transfers</li>
+            <li><span class="check">✓</span> Priority support</li>
+            <li><span class="check">✓</span> <strong style="color:var(--accent2)">Transfer to 5 devices at once</strong></li>
+          </ul>
+          <a id="unl-btn" href="https://payments.cashfree.com/forms/sharekit-unlimited-monthly" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center;padding:0.75rem;">Get Unlimited — ₹999/month</a>
+        </div>
+      </div>
+
+      <p style="text-align:center;margin-top:1.5rem;font-size:0.82rem;color:var(--muted);">
+        Pay via &nbsp;🏦 UPI &nbsp;·&nbsp; 💳 Cards &nbsp;·&nbsp; 📱 PhonePe / Paytm / Google Pay &nbsp;·&nbsp; 🏧 Net Banking &nbsp;·&nbsp; Powered by Cashfree
+      </p>
+    </section>
+
+    <!-- LANGUAGES -->
+    <section style="padding:4rem 0;" id="languages">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <p class="section-label" style="margin-bottom:0.5rem;">Global reach</p>
+        <h2 class="section-title" style="font-size:1.8rem;">50+ languages supported</h2>
+      </div>
+      <div class="lang-marquee">
+        <div class="lang-track" id="langTrack"></div>
+      </div>
+    </section>
+
+    <!-- SECURITY -->
+    <section class="section fade-up">
+      <p class="section-label">Privacy first</p>
+      <h2 class="section-title">Your security is our priority</h2>
+      <p class="section-sub">Every transfer is protected from start to finish.</p>
+      <div class="security-grid">
+        <div class="security-item"><span class="icon">🔐</span><div><h4>End-to-end encrypted</h4><p>All files are encrypted in transit and at rest. Nobody can read your files.</p></div></div>
+        <div class="security-item"><span class="icon">🦠</span><div><h4>Virus scanning</h4><p>Every uploaded file is automatically scanned for malware before download.</p></div></div>
+        <div class="security-item"><span class="icon">⏱️</span><div><h4>Auto-expiring links</h4><p>Links expire automatically. Files are permanently deleted from servers.</p></div></div>
+        <div class="security-item"><span class="icon">🙈</span><div><h4>No tracking, no ads</h4><p>We don't track your files or sell your data. Your data is yours alone.</p></div></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section fade-up">
+      <div class="cta-card">
+        <h2>Ready to share smarter?</h2>
+        <p>Join thousands of users who trust Sharekit to send their files fast, safe, and free.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="upload.html" class="btn btn-primary btn-large">&#8679; Share a file now</a>
+          <a href="signup.html" class="btn btn-outline btn-large">Create free account</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand">
+      <a href="index.html" class="logo" style="margin-bottom:0.6rem;display:inline-flex;"><span class="logo-dot"></span>Sharekit</a>
+      <p>Safe and easy wireless file sharing for any device, anywhere in the world.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h5>Product</h5>
+        <a href="upload.html">Share a file</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#">About</a>
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms of use</a>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <a href="login.html">Log in</a>
+        <a href="signup.html">Sign up free</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+    </div>
+  </footer>
+  <div class="footer-bottom">&copy; 2025 Sharekit.in · Made with care in India 🇮🇳</div>
+
+  <script>
+    // ── SEND / RECEIVE SWITCH ──
+    function switchTab(tab) {
+      document.getElementById('tabSend').classList.toggle('active', tab === 'send');
+      document.getElementById('tabReceive').classList.toggle('active', tab === 'receive');
+      document.getElementById('panelSend').style.display    = tab === 'send'    ? 'block' : 'none';
+      document.getElementById('panelReceive').style.display = tab === 'receive' ? 'block' : 'none';
+    }
+
+    function createReceiveLink() {
+      const email   = document.getElementById('receiveEmail').value.trim();
+      const name    = document.getElementById('receiveName').value.trim();
+      const subject = document.getElementById('receiveSubject').value.trim();
+      if (!email) { alert('Please enter your email address so senders can reach you.'); return; }
+      // Generate a unique receive token
+      const token = btoa(email + ':' + Date.now()).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_').slice(0, 20);
+      const receiveUrl = 'https://sharekit.in/receive.html?for=' + encodeURIComponent(name || email) + '&token=' + token + '&subject=' + encodeURIComponent(subject);
+      document.getElementById('receiveUrl').textContent = receiveUrl;
+      document.getElementById('receiveResult').style.display = 'block';
+    }
+
+    function copyReceiveLink() {
+      const url = document.getElementById('receiveUrl').textContent;
+      const btn = document.getElementById('receiveCopyBtn');
+      navigator.clipboard.writeText(url).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      });
+    }
+
+    // Drop zone
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+    function handleFiles(files) { if (files.length > 0) window.location.href = 'upload.html'; }
+
+    // Language marquee
+    const langs = ['English','Español','中文','Português','Русский','Українська','Tiếng Việt','हिन्दी','বাংলা','Français','Deutsch','日本語','한국어','Italiano','Polski','Türkçe','العربية','فارسی','Bahasa Indonesia','Bahasa Melayu','தமிழ்','తెలుగు','ภาษาไทย','Română','Nederlands','Svenska','Norsk','Dansk','Suomi','Magyar','Čeština','Slovenčina','Ελληνικά','עברית','Swahili','Afrikaans','Filipino','မြန်မာဘာသာ','ខ្មែរ','Монгол','Қазақ','Беларуская','Azərbaycan','Հայերեն','ქართული','Shqip','Srpski','Bosanski','Hrvatski','Slovenščina'];
+    const track = document.getElementById('langTrack');
+    [...langs,...langs].forEach(l => { const p = document.createElement('span'); p.className='lang-pill'; p.textContent=l; track.appendChild(p); });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Billing toggle
+    let isYearly = false;
+    const CF = {
+      pm: 'https://payments.cashfree.com/forms?code=sharekit-pro-monthly',
+      py: 'https://payments.cashfree.com/forms/sharekit-pro-yearly',
+      um: 'https://payments.cashfree.com/forms/sharekit-unlimited-monthly',
+      uy: 'https://payments.cashfree.com/forms/sharekit-unlimited-yearly',
+    };
+    function toggleBilling() {
+      isYearly = !isYearly;
+      document.getElementById('toggleThumb').style.transform = isYearly ? 'translateX(22px)' : 'translateX(0)';
+      document.getElementById('lbl-monthly').style.color = isYearly ? 'var(--muted)' : 'var(--text)';
+      document.getElementById('lbl-yearly').style.color  = isYearly ? 'var(--text)'  : 'var(--muted)';
+      if (isYearly) {
+        document.getElementById('pro-price').innerHTML = '₹3,499 <span>/ year</span>';
+        document.getElementById('pro-period').innerHTML = 'Billed yearly &nbsp;·&nbsp; <span style="color:var(--green)">You save ₹1,289</span>';
+        document.getElementById('pro-btn').href = CF.py;
+        document.getElementById('pro-btn').textContent = 'Get Pro — ₹3,499/year';
+        document.getElementById('unl-price').innerHTML = '₹8,999 <span>/ year</span>';
+        document.getElementById('unl-period').innerHTML = 'Billed yearly &nbsp;·&nbsp; <span style="color:var(--green)">You save ₹2,989</span>';
+        document.getElementById('unl-btn').href = CF.uy;
+        document.getElementById('unl-btn').textContent = 'Get Unlimited — ₹8,999/year';
+      } else {
+        document.getElementById('pro-price').innerHTML = '₹399 <span>/ month</span>';
+        document.getElementById('pro-period').innerHTML = 'Billed monthly &nbsp;·&nbsp; <a href="'+CF.py+'" target="_blank" style="color:var(--green);text-decoration:none;">Save ₹1,289 yearly →</a>';
+        document.getElementById('pro-btn').href = CF.pm;
+        document.getElementById('pro-btn').textContent = 'Get Pro — ₹399/month';
+        document.getElementById('unl-price').innerHTML = '₹999 <span>/ month</span>';
+        document.getElementById('unl-period').innerHTML = 'Billed monthly &nbsp;·&nbsp; <a href="'+CF.uy+'" target="_blank" style="color:var(--green);text-decoration:none;">Save ₹2,989 yearly →</a>';
+        document.getElementById('unl-btn').href = CF.um;
+        document.getElementById('unl-btn').textContent = 'Get Unlimited — ₹999/month';
+      }
+    }
+  </script>
+</body>
+</html>
