@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up Free — Sharekit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0f0f5;--muted:#8888a0;--accent:#6c63ff;--accent2:#a78bfa;--green:#22d3a0; }
+    body { background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem; }
+    .blob { position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0; }
+    .blob-1 { width:500px;height:500px;background:rgba(108,99,255,0.1);top:-150px;right:-100px; }
+    .blob-2 { width:400px;height:400px;background:rgba(34,211,160,0.07);bottom:-100px;left:-50px; }
+    .card { position:relative;z-index:1;width:100%;max-width:440px;background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:2.5rem; }
+    .logo { font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.03em;color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-bottom:2rem; }
+    .logo-dot { width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px var(--accent); }
+    h1 { font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;letter-spacing:-0.03em;margin-bottom:0.3rem; }
+    .sub { color:var(--muted);font-size:0.88rem;margin-bottom:1.5rem; }
+    .plan-pill { display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.25);border-radius:100px;font-size:0.78rem;color:var(--accent2);margin-bottom:1.5rem; }
+    .perks { display:flex;flex-direction:column;gap:7px;margin-bottom:1.5rem; }
+    .perk { display:flex;align-items:center;gap:10px;font-size:0.84rem;color:var(--muted); }
+    .perk span:first-child { color:var(--green); }
+    .form-row { margin-bottom:1rem; }
+    .form-row-2 { display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem; }
+    label { display:block;font-size:0.82rem;color:var(--muted);margin-bottom:6px; }
+    input { width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:0.75rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.95rem;transition:border-color 0.2s;outline:none; }
+    input:focus { border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.12); }
+    .btn-primary { width:100%;padding:0.85rem;background:var(--accent);color:#fff;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;cursor:pointer;transition:all 0.2s;box-shadow:0 0 24px rgba(108,99,255,0.3);margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:8px; }
+    .btn-primary:hover { background:#7c74ff;transform:translateY(-1px); }
+    .btn-primary:disabled { opacity:0.6;cursor:not-allowed;transform:none; }
+    .divider { display:flex;align-items:center;gap:12px;margin:1.5rem 0;color:var(--muted);font-size:0.8rem; }
+    .divider::before,.divider::after { content:'';flex:1;height:1px;background:var(--border); }
+    .google-btn { width:100%;padding:0.75rem;background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.9rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px; }
+    .google-btn:hover { background:rgba(255,255,255,0.05); }
+    .google-btn:disabled { opacity:0.6;cursor:not-allowed; }
+    .terms { font-size:0.78rem;color:var(--muted);text-align:center;margin-top:1.2rem;line-height:1.5; }
+    .terms a { color:var(--accent2);text-decoration:none; }
+    .footer-text { text-align:center;font-size:0.85rem;color:var(--muted);margin-top:1.2rem; }
+    .footer-text a { color:var(--accent2);text-decoration:none; }
+    .alert { border-radius:10px;padding:10px 14px;font-size:0.85rem;margin-bottom:1rem;display:none; }
+    .alert.show { display:block; }
+    .alert-error { background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5; }
+    .alert-success { background:rgba(34,211,160,0.1);border:1px solid rgba(34,211,160,0.25);color:var(--green); }
+    .spinner { width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .strength-bar { height:4px;border-radius:100px;background:var(--bg3);margin-top:6px;overflow:hidden; }
+    .strength-fill { height:100%;border-radius:100px;transition:width 0.3s,background 0.3s;width:0%; }
+    .strength-label { font-size:0.72rem;margin-top:4px; }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="card">
+    <a href="index.html" class="logo"><span class="logo-dot"></span>Sharekit</a>
+    <h1>Create your account</h1>
+    <p class="sub">Free forever. No credit card needed.</p>
+
+    <div class="plan-pill" id="planPill">✦ Free plan · 3 GB/month</div>
+
+    <div class="perks">
+      <div class="perk"><span>✓</span> 3 GB transfer per month, free</div>
+      <div class="perk"><span>✓</span> All file types supported</div>
+      <div class="perk"><span>✓</span> Works on any device, any browser</div>
+    </div>
+
+    <div class="alert alert-error" id="signupError"></div>
+    <div class="alert alert-success" id="signupSuccess"></div>
+
+    <div class="form-row-2">
+      <div>
+        <label>First name</label>
+        <input type="text" id="fname" placeholder="Arjun" autocomplete="given-name" />
+      </div>
+      <div>
+        <label>Last name</label>
+        <input type="text" id="lname" placeholder="Kumar" autocomplete="family-name" />
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+    <div class="form-row">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)" />
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="strength-label" id="strengthLabel" style="color:var(--muted);"></div>
+    </div>
+
+    <button class="btn-primary" id="signupBtn" onclick="handleSignup()">Create free account</button>
+
+    <p class="terms">By signing up you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+    <p class="footer-text">Already have an account? <a href="login.html">Log in</a></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    const sb = supabase.createClient(
+      'https://pdgbanfrpztnsvnheaob.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZ2JhbmZycHp0bnN2bmhlYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMTk3MTEsImV4cCI6MjA5MTc5NTcxMX0.FtCy-o9fW6w1nMOwQO84TDtqN2ncFKtUrJ_kuHC6Hja'
+    );
+
+    // Redirect if already logged in
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session) window.location.href = 'dashboard.html';
+    });
+
+    // Show plan from URL
+    const plan = new URLSearchParams(window.location.search).get('plan');
+    const pill = document.getElementById('planPill');
+    if (plan === 'pro') { pill.textContent = '⚡ Pro plan · 500 GB/month'; pill.style.cssText += 'background:rgba(34,211,160,0.1);border-color:rgba(34,211,160,0.25);color:#22d3a0'; }
+    else if (plan === 'unlimited') { pill.textContent = '∞ Unlimited plan · No limits'; pill.style.cssText += 'background:rgba(249,115,22,0.1);border-color:rgba(249,115,22,0.25);color:#f97316'; }
+
+    // Password strength checker
+    function checkStrength(val) {
+      const fill  = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+      if (!val) { fill.style.width='0%'; label.textContent=''; return; }
+      let score = 0;
+      if (val.length >= 8)  score++;
+      if (val.length >= 12) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      const levels = [
+        { w:'20%', color:'#ef4444', text:'Too weak' },
+        { w:'40%', color:'#f97316', text:'Weak' },
+        { w:'60%', color:'#eab308', text:'Fair' },
+        { w:'80%', color:'#22d3a0', text:'Strong' },
+        { w:'100%',color:'#22d3a0', text:'Very strong ✓' },
+      ];
+      const l = levels[Math.min(score, 4)];
+      fill.style.width = l.w;
+      fill.style.background = l.color;
+      label.style.color = l.color;
+      label.textContent = l.text;
+    }
+
+    function showMsg(id, msg, type) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = 'alert alert-' + type + ' show';
+    }
+
+    function setBtn(id, loading, label) {
+      const b = document.getElementById(id);
+      b.disabled = loading;
+      b.innerHTML = loading ? '<span class="spinner"></span>&nbsp;' + label : label;
+    }
+
+    async function handleSignup() {
+      const fname = document.getElementById('fname').value.trim();
+      const lname = document.getElementById('lname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const pass  = document.getElementById('password').value;
+
+      if (!fname || !email || !pass) { showMsg('signupError','Please fill in all required fields.','error'); return; }
+      if (pass.length < 8) { showMsg('signupError','Password must be at least 8 characters.','error'); return; }
+
+      setBtn('signupBtn', true, 'Creating account…');
+      document.getElementById('signupError').className = 'alert';
+
+      const { data, error } = await sb.auth.signUp({
+        email,
+        password: pass,
+        options: {
+          data: {
+            full_name: (fname + ' ' + lname).trim(),
+            first_name: fname,
+            last_name: lname,
+            plan: plan || 'free',
+          }
+        }
+      });
+
+      setBtn('signupBtn', false, 'Create free account');
+
+      if (error) {
+        const msg = error.message.includes('already registered')
+          ? 'This email is already registered. <a href="login.html" style="color:var(--accent2)">Log in instead →</a>'
+          : error.message;
+        document.getElementById('signupError').innerHTML = msg;
+        document.getElementById('signupError').className = 'alert alert-error show';
+        return;
+      }
+
+      // If email confirmation required
+      if (data.user && !data.session) {
+        showMsg('signupSuccess', '✓ Account created! Check your email (' + email + ') and click the confirmation link to activate your account.', 'success');
+        document.getElementById('signupBtn').style.display = 'none';
+        return;
+      }
+
+      // If auto-confirmed (no email verification needed)
+      showMsg('signupSuccess', '✓ Account created! Redirecting to dashboard…', 'success');
+      setTimeout(() => {
+        if (plan === 'pro') window.location.href = 'https://payments.cashfree.com/forms?code=sharekit-pro-monthly';
+        else if (plan === 'unlimited') window.location.href = 'https://payments.cashfree.com/forms/sharekit-unlimited-monthly';
+        else window.location.href = 'dashboard.html';
+      }, 1000);
+    } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/dashboard.html' }
+      });
+      if (error) { setBtn('googleBtn', false, 'Sign up with Google'); showMsg('signupError','Google signup failed. Try email signup.','error'); }
+    }
+  </script>
+</body>
+</html>

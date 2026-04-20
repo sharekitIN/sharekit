@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><link rel="icon" type="image/svg+xml" href="favicon.svg" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Share Files — Sharekit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0f0f5;--muted:#8888a0;--accent:#6c63ff;--accent2:#a78bfa;--green:#22d3a0;--red:#f87171;--orange:#f97316}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+    nav{position:sticky;top:0;z-index:100;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(10,10,15,0.92);backdrop-filter:blur(20px)}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.03em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+    .logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px var(--accent)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0.6rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;text-decoration:none;transition:all 0.2s;border:none}
+    .btn-primary{background:var(--accent);color:#fff;box-shadow:0 0 20px rgba(108,99,255,0.3)}
+    .btn-primary:hover{background:#7c74ff;transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+    .btn-ghost:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+    .page{max-width:680px;margin:0 auto;padding:2.5rem 1.5rem}
+    .page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.9rem;letter-spacing:-0.03em;margin-bottom:0.3rem}
+    .page-sub{color:var(--muted);font-size:0.92rem;margin-bottom:2rem}
+    .plan-banner{padding:10px 14px;border-radius:10px;font-size:0.82rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    .plan-banner.free{background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2);color:var(--accent2)}
+    .plan-banner.pro{background:rgba(34,211,160,0.08);border:1px solid rgba(34,211,160,0.2);color:var(--green)}
+    .plan-banner.unlimited{background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);color:var(--orange)}
+    .plan-banner a{color:inherit;font-weight:600;text-decoration:none}
+    .limits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1.2rem}
+    .limit-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:0.7rem}
+    .limit-item.warn{border-color:rgba(234,179,8,0.3)}
+    .limit-item.full{border-color:rgba(248,113,113,0.4);background:rgba(248,113,113,0.04)}
+    .limit-label{font-size:0.72rem;color:var(--muted);margin-bottom:4px}
+    .limit-count{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem}
+    .limit-count.warn{color:#eab308}.limit-count.full{color:var(--red)}
+    .limit-bar-wrap{height:3px;background:var(--bg3);border-radius:100px;overflow:hidden;margin-top:5px}
+    .limit-bar{height:100%;border-radius:100px;transition:width 0.3s}
+    .storage-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1.5rem}
+    .storage-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+    .storage-label{font-size:0.8rem;color:var(--muted)}
+    .storage-val{font-size:0.8rem;font-weight:500}
+    .storage-bar-wrap{height:5px;background:var(--bg3);border-radius:100px;overflow:hidden}
+    .storage-fill{height:100%;border-radius:100px;background:var(--accent);transition:width 0.3s}
+    .storage-fill.warn{background:#eab308}.storage-fill.full{background:var(--red)}
+    .drop-zone{border:2px dashed var(--border2);border-radius:20px;padding:2.5rem 2rem;text-align:center;cursor:pointer;transition:all 0.3s;background:var(--bg2);margin-bottom:1.5rem}
+    .drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:rgba(108,99,255,0.05)}
+    .dz-icon{font-size:2.2rem;margin-bottom:0.6rem}
+    .dz-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:0.3rem}
+    .dz-sub{color:var(--muted);font-size:0.82rem}
+    #fileInput{display:none}
+    .file-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
+    .file-item{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 16px}
+    .file-item.blocked-file{border-color:rgba(248,113,113,0.4);background:rgba(248,113,113,0.04)}
+    .file-emoji{font-size:1.4rem;flex-shrink:0}
+    .file-info{flex:1;min-width:0}
+    .file-name{font-size:0.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .file-size{font-size:0.75rem;color:var(--muted)}
+    .file-reason{font-size:0.72rem;color:var(--red);margin-top:2px}
+    .file-prog{height:3px;border-radius:100px;background:var(--bg3);margin-top:5px;display:none;overflow:hidden}
+    .file-prog-bar{height:100%;border-radius:100px;background:var(--accent);transition:width 0.3s}
+    .file-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:4px;transition:color 0.2s;flex-shrink:0}
+    .file-remove:hover{color:var(--red)}
+    .limit-warn-block{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;display:none}
+    .limit-warn-block.show{display:block}
+    .limit-warn-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--red);margin-bottom:0.3rem}
+    .limit-warn-desc{font-size:0.84rem;color:var(--muted);margin-bottom:0.8rem}
+    .limit-warn-block a{color:var(--accent2);text-decoration:none;font-weight:600}
+    .form-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}
+    .form-card h4{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:1.2rem}
+    .form-row{margin-bottom:1rem}.form-row:last-child{margin-bottom:0}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    label{display:block;font-size:0.8rem;color:var(--muted);margin-bottom:5px}
+    .pro-tag{font-size:0.68rem;background:rgba(108,99,255,0.15);color:var(--accent2);padding:1px 6px;border-radius:4px;margin-left:4px}
+    input[type=text],input[type=email],input[type=password],select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:0.65rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+    input:disabled,select:disabled{opacity:0.4;cursor:not-allowed}
+    select option{background:var(--bg3)}
+    .pw-toggle-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:0.4rem 0}
+    .pw-toggle{width:40px;height:22px;background:var(--bg3);border-radius:100px;position:relative;transition:background 0.2s;border:1px solid var(--border2);flex-shrink:0}
+    .pw-toggle.on{background:var(--accent);border-color:var(--accent)}
+    .pw-toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.2s}
+    .pw-toggle.on::after{transform:translateX(18px)}
+    .overall-prog{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.2rem;margin-bottom:1.5rem;display:none}
+    .overall-prog h4{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:0.8rem}
+    .prog-wrap{height:8px;background:var(--bg3);border-radius:100px;overflow:hidden;margin-bottom:0.5rem}
+    .prog-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;transition:width 0.4s;width:0%}
+    .prog-lbl{font-size:0.82rem;color:var(--muted)}
+    .success-card{display:none;text-align:center;padding:2.5rem 2rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px}
+    .success-card.show{display:block}
+    .success-icon{font-size:3rem;margin-bottom:1rem}
+    .success-card h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:0.5rem}
+    .success-card p{color:var(--muted);margin-bottom:1.5rem;font-size:0.9rem}
+    .link-box{display:flex;gap:8px;align-items:center;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;margin-bottom:1.2rem}
+    .link-box span{flex:1;font-size:0.85rem;color:var(--accent2);word-break:break-all;text-align:left}
+    .copy-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.8rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+    .copy-btn:hover{background:#7c74ff}
+    .success-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .alert{border-radius:10px;padding:10px 14px;font-size:0.85rem;margin-bottom:1rem;display:none}
+    .alert.show{display:block}
+    .alert-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:var(--red)}
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:520px){.form-row-2{grid-template-columns:1fr}.page{padding:2rem 1rem}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span class="logo-dot"></span>Sharekit</a>
+    <div style="display:flex;gap:10px;"><a href="dashboard.html" class="btn btn-ghost">Dashboard</a></div>
+  </nav>
+  <div class="page">
+    <h1 class="page-title">Share files</h1>
+    <p class="page-sub">Drop your files, set your options, and transfer.</p>
+    <div class="plan-banner free" id="planBanner">🔓 Loading your plan…</div>
+    <div class="storage-bar" id="storageBar" style="display:none">
+      <div class="storage-row"><span class="storage-label">📦 Storage used this month</span><span class="storage-val" id="storageVal">0 MB of 3 GB</span></div>
+      <div class="storage-bar-wrap"><div class="storage-fill" id="storageFill" style="width:0%"></div></div>
+    </div>
+    <div class="limits-grid" id="limitsGrid" style="display:none">
+      <div class="limit-item" id="lim-images"><div class="limit-label">🖼️ Images</div><div class="limit-count" id="lc-images">0/10</div><div class="limit-bar-wrap"><div class="limit-bar" id="lb-images" style="width:0%;background:#6c63ff"></div></div></div>
+      <div class="limit-item" id="lim-videos"><div class="limit-label">🎬 Videos</div><div class="limit-count" id="lc-videos">0/10</div><div class="limit-bar-wrap"><div class="limit-bar" id="lb-videos" style="width:0%;background:#22d3a0"></div></div></div>
+      <div class="limit-item" id="lim-audio"><div class="limit-label">🎵 Audio</div><div class="limit-count" id="lc-audio">0/10</div><div class="limit-bar-wrap"><div class="limit-bar" id="lb-audio" style="width:0%;background:#f97316"></div></div></div>
+      <div class="limit-item" id="lim-docs"><div class="limit-label">📄 Docs</div><div class="limit-count" id="lc-docs">0/5</div><div class="limit-bar-wrap"><div class="limit-bar" id="lb-docs" style="width:0%;background:#eab308"></div></div></div>
+      <div class="limit-item" id="lim-zips"><div class="limit-label">🗜️ Archives</div><div class="limit-count" id="lc-zips">0/5</div><div class="limit-bar-wrap"><div class="limit-bar" id="lb-zips" style="width:0%;background:#a78bfa"></div></div></div>
+      <div class="limit-item" id="lim-apks"><div class="limit-label">📱 APKs</div><div class="limit-count" id="lc-apks">0/1</div><div class="limit-bar-wrap"><div class="limit-bar" id="lb-apks" style="width:0%;background:#f472b6"></div></div></div>
+    </div>
+    <div class="limit-warn-block" id="limitWarn">
+      <div class="limit-warn-title">⚠️ Plan limit reached</div>
+      <div class="limit-warn-desc" id="limitWarnDesc">You have reached your monthly limit for this file type.</div>
+      <a href="https://payments.cashfree.com/forms?code=sharekit-pro-monthly" target="_blank">Upgrade to Pro for 10,000 transfers/month →</a>
+    </div>
+    <div class="alert alert-error" id="mainError"></div>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" multiple/>
+      <div class="dz-icon">📁</div>
+      <div class="dz-title">Drop files here or click to browse</div>
+      <div class="dz-sub">All file types · Your limits shown above</div>
+    </div>
+    <div class="file-list" id="fileList"></div>
+    <div class="form-card" id="optionsCard" style="display:none">
+      <h4>Transfer options</h4>
+      <div class="form-row"><label>Recipient email <span style="font-size:0.75rem;color:var(--muted)">(optional)</span></label><input type="email" id="recipientEmail" placeholder="recipient@email.com"/></div>
+      <div class="form-row-2">
+        <div><label>Link expiry</label><select id="expiry"><option value="3">3 days (Free)</option><option value="7" id="opt7" disabled>7 days (Pro)</option><option value="30" id="opt30" disabled>30 days (Pro)</option><option value="0" id="optNever" disabled>Never (Unlimited)</option></select></div>
+        <div><label>Message <span style="font-size:0.75rem;color:var(--muted)">(optional)</span></label><input type="text" id="transferMsg" placeholder="Note for recipient…"/></div>
+      </div>
+      <div class="form-row">
+        <div class="pw-toggle-row" onclick="togglePw()">
+          <div class="pw-toggle" id="pwToggle"></div>
+          <span style="font-size:0.9rem;color:var(--text)">Password protect <span class="pro-tag">PRO</span></span>
+        </div>
+        <div id="pwWrap" style="display:none;margin-top:0.8rem"><input type="password" id="transferPw" placeholder="Enter a password for this link…"/><p style="font-size:0.74rem;color:var(--muted);margin-top:4px">Recipients must enter this to download.</p></div>
+      </div>
+    </div>
+    <div class="overall-prog" id="overallProg"><h4 id="progTitle">Uploading files…</h4><div class="prog-wrap"><div class="prog-bar" id="progBar"></div></div><p class="prog-lbl" id="progLbl">Starting…</p></div>
+    <div id="transferAction" style="display:none"><button class="btn btn-primary" id="transferBtn" onclick="startTransfer()" style="width:100%;padding:0.9rem;font-size:1rem;border-radius:14px">⬆ Transfer files</button></div>
+    <div class="success-card" id="successCard">
+      <div class="success-icon">✅</div><h3>Files transferred!</h3>
+      <p id="successMsg">Your share link is ready. Anyone with the link can download your files.</p>
+      <div class="link-box"><span id="shareLinkDisplay"></span><button class="copy-btn" id="copyBtn" onclick="copyLink()">Copy</button></div>
+      <div class="success-actions"><button class="btn btn-primary" onclick="resetUpload()">Share more files</button><a href="dashboard.html" class="btn btn-ghost">View dashboard</a></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
+  <script>
+    const sb=supabase.createClient('https://pdgbanfrpztnsvnheaob.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZ2JhbmZycHp0bnN2bmhlYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMTk3MTEsImV4cCI6MjA5MTc5NTcxMX0.FtCy-o9fW6w1nMOwQO84TDtqN2ncFKtUrJ_kuHC6Hja');
+    const SITE='https://sharekit.in';
+    const FILESTACK_KEY='Ahlx2i5waRYayFFIJaRCpz';
+    const LIMITS={free:{images:10,videos:10,audio:10,docs:5,zips:5,apks:1,storage_gb:3,expiry_days:3,password:false},pro:{images:10000,videos:10000,audio:10000,docs:5000,zips:5000,apks:100,storage_gb:500,expiry_days:30,password:true},unlimited:{images:null,videos:null,audio:null,docs:null,zips:null,apks:null,storage_gb:null,expiry_days:0,password:true}};
+    let files=[],plan='free',uid=null,usage={images:0,videos:0,audio:0,docs:0,zips:0,apks:0,storage_bytes:0},pwOn=false;
+
+    (async()=>{
+      const{data:{session}}=await sb.auth.getSession();
+      if(session){
+        uid=session.user.id;plan=session.user.user_metadata?.plan||'free';
+        const exp=session.user.user_metadata?.plan_expiry;
+        if(exp&&new Date(exp)<new Date()){plan='free';await sb.auth.updateUser({data:{plan:'free',plan_expiry:null}});}
+        await loadUsage();
+      }
+      setupUI();
+    })();
+
+    async function loadUsage(){
+      if(!uid)return;
+      const start=new Date();start.setDate(1);start.setHours(0,0,0,0);
+      const{data}=await sb.from('transfers').select('filename,filesize').eq('user_id',uid).gte('created_at',start.toISOString());
+      if(!data)return;
+      usage={images:0,videos:0,audio:0,docs:0,zips:0,apks:0,storage_bytes:0};
+      data.forEach(t=>{const c=getCat(t.filename);if(usage[c]!==undefined)usage[c]++;usage.storage_bytes+=(t.filesize||0);});
+    }
+
+    function getCat(n){const e=(n||'').split('.').pop().toLowerCase();
+      if(['jpg','jpeg','png','gif','heic','webp','svg'].includes(e))return'images';
+      if(['mp4','mkv','avi','mov','wmv','webm'].includes(e))return'videos';
+      if(['mp3','wav','aac','m4a','flac','ogg'].includes(e))return'audio';
+      if(['pdf','doc','docx','ppt','pptx','xls','xlsx','txt','csv'].includes(e))return'docs';
+      if(['zip','rar','7z','tar','gz'].includes(e))return'zips';
+      if(['apk','ipa'].includes(e))return'apks';
+      return'other';
+    }
+
+    function setupUI(){
+      const b=document.getElementById('planBanner');
+      if(plan==='pro'){b.className='plan-banner pro';b.innerHTML='⚡ Pro plan active &nbsp;·&nbsp; 500 GB/month &nbsp;·&nbsp; All Pro features unlocked';document.getElementById('opt7').disabled=false;document.getElementById('opt30').disabled=false;}
+      else if(plan==='unlimited'){b.className='plan-banner unlimited';b.innerHTML='∞ Unlimited plan &nbsp;·&nbsp; No limits &nbsp;·&nbsp; All features unlocked';['opt7','opt30','optNever'].forEach(id=>document.getElementById(id).disabled=false);document.getElementById('expiry').value='0';}
+      else{b.innerHTML='🔓 Free plan &nbsp;·&nbsp; 3 GB/month &nbsp;·&nbsp; <a href="https://payments.cashfree.com/forms?code=sharekit-pro-monthly" target="_blank">Upgrade to Pro ↗</a>';}
+      if(plan==='free'&&uid){document.getElementById('limitsGrid').style.display='grid';document.getElementById('storageBar').style.display='block';updateLimitBars();}
+    }
+
+    function updateLimitBars(){
+      const lim=LIMITS.free;
+      ['images','videos','audio','docs','zips','apks'].forEach(cat=>{
+        const used=usage[cat],limit=lim[cat],pct=Math.min((used/limit)*100,100);
+        document.getElementById('lc-'+cat).textContent=used+'/'+limit;
+        document.getElementById('lb-'+cat).style.width=pct+'%';
+        const item=document.getElementById('lim-'+cat),lc=document.getElementById('lc-'+cat);
+        item.className='limit-item'+(pct>=100?' full':pct>=80?' warn':'');
+        lc.className='limit-count'+(pct>=100?' full':pct>=80?' warn':'');
+        if(pct>=100)document.getElementById('lb-'+cat).style.background='#f87171';
+        else if(pct>=80)document.getElementById('lb-'+cat).style.background='#eab308';
+      });
+      const usedGB=usage.storage_bytes/1073741824,pct=Math.min((usedGB/3)*100,100),usedMB=usage.storage_bytes/1048576;
+      document.getElementById('storageVal').textContent=(usedMB<1024?usedMB.toFixed(1)+' MB':usedGB.toFixed(2)+' GB')+' of 3 GB';
+      document.getElementById('storageFill').style.width=pct+'%';
+      document.getElementById('storageFill').className='storage-fill'+(pct>=100?' full':pct>=80?' warn':'');
+    }
+
+    function checkLimit(f){
+      if(plan==='unlimited')return{ok:true};
+      const lim=LIMITS[plan],cat=getCat(f.name),limit=lim[cat];
+      if(limit!==null&&limit!==undefined){
+        const pending=files.filter(x=>!x._blocked&&getCat(x.name)===cat).length;
+        if((usage[cat]||0)+pending>=limit)return{ok:false,reason:`${cat.charAt(0).toUpperCase()+cat.slice(1)} limit reached (${usage[cat]}/${limit} used this month)`};}
+      if(lim.storage_gb!==null){
+        const pendingBytes=files.reduce((s,x)=>s+(x._blocked?0:x.size),0);
+        if(usage.storage_bytes+pendingBytes+f.size>lim.storage_gb*1073741824)return{ok:false,reason:`Storage limit reached (${lim.storage_gb} GB/month on ${plan} plan)`};}
+      return{ok:true};
+    }
+
+    function getEmoji(n){const e=(n||'').split('.').pop().toLowerCase(),m={jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🖼️',heic:'🖼️',webp:'🖼️',mp4:'🎬',mkv:'🎬',avi:'🎬',mov:'🎬',mp3:'🎵',wav:'🎵',aac:'🎵',m4a:'🎵',pdf:'📄',doc:'📄',docx:'📄',ppt:'📄',xls:'📄',xlsx:'📄',txt:'📄',zip:'🗜️',rar:'🗜️','7z':'🗜️',apk:'📱'};return m[e]||'📎';}
+    function fmtSize(b){if(!b)return'0 B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+
+    function render(){
+      const list=document.getElementById('fileList');list.innerHTML='';
+      let anyBlocked=false,reasons=[];
+      files.forEach((f,i)=>{
+        if(f._blocked){anyBlocked=true;reasons.push(f._reason);}
+        const el=document.createElement('div');
+        el.className='file-item'+(f._blocked?' blocked-file':'');el.id='fi'+i;
+        el.innerHTML=`<span class="file-emoji">${getEmoji(f.name)}</span><div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${fmtSize(f.size)}</div>${f._blocked?'<div class="file-reason">⛔ '+f._reason+'</div>':''}<div class="file-prog" id="fp${i}"><div class="file-prog-bar" id="fb${i}" style="width:0%"></div></div></div><button class="file-remove" onclick="removeFile(${i})">✕</button>`;
+        list.appendChild(el);
+      });
+      const valid=files.filter(f=>!f._blocked),has=files.length>0;
+      document.getElementById('optionsCard').style.display=has?'block':'none';
+      document.getElementById('transferAction').style.display=valid.length>0?'block':'none';
+      const wb=document.getElementById('limitWarn');
+      if(anyBlocked){document.getElementById('limitWarnDesc').textContent=[...new Set(reasons)][0];wb.classList.add('show');}
+      else wb.classList.remove('show');
+    }
+
+    function removeFile(i){files.splice(i,1);render();}
+
+    function addFiles(newFiles){
+      const arr=Array.from(newFiles).map(f=>{const c=checkLimit(f);if(!c.ok){f._blocked=true;f._reason=c.reason;}return f;});
+      files=[...files,...arr];render();
+    }
+
+    document.getElementById('fileInput').addEventListener('change',function(){addFiles(this.files);this.value='';});
+    const dz=document.getElementById('dropZone');
+    dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+    dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+    dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');addFiles(e.dataTransfer.files);});
+
+    function togglePw(){
+      if(plan==='free'){const e=document.getElementById('mainError');e.innerHTML='Password protection is a Pro feature. <a href="https://payments.cashfree.com/forms?code=sharekit-pro-monthly" target="_blank" style="color:var(--accent2)">Upgrade to Pro →</a>';e.className='alert alert-error show';return;}
+      pwOn=!pwOn;document.getElementById('pwToggle').classList.toggle('on',pwOn);document.getElementById('pwWrap').style.display=pwOn?'block':'none';
+    }
+
+    async function hashPw(p){const enc=new TextEncoder(),buf=await crypto.subtle.digest('SHA-256',enc.encode(p));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+
+    async function startTransfer(){
+      const valid=files.filter(f=>!f._blocked);if(!valid.length)return;
+      if(plan==='free'&&uid){await loadUsage();for(const f of valid){const c=checkLimit(f);if(!c.ok){f._blocked=true;f._reason=c.reason;render();return;}}}
+      const btn=document.getElementById('transferBtn'),prog=document.getElementById('overallProg'),bar=document.getElementById('progBar'),lbl=document.getElementById('progLbl');
+      btn.disabled=true;btn.innerHTML='<span class="spinner"></span>&nbsp;Uploading…';prog.style.display='block';document.getElementById('mainError').className='alert';
+      const cl=filestack.init(FILESTACK_KEY),handles=[];
+      try{
+        for(let i=0;i<valid.length;i++){
+          const f=valid[i];lbl.textContent=`Uploading ${i+1} of ${valid.length}: ${f.name}`;
+          const idx=files.indexOf(f);if(idx>=0)document.getElementById('fp'+idx).style.display='block';
+          const r=await cl.upload(f,{onProgress:({totalPercent:p})=>{if(idx>=0)document.getElementById('fb'+idx).style.width=p+'%';bar.style.width=Math.round((i/valid.length+p/100/valid.length)*100)+'%';}});
+          handles.push({handle:r.handle,name:f.name,size:f.size});
+          if(idx>=0)document.getElementById('fb'+idx).style.background='var(--green)';
+        }
+        bar.style.width='100%';lbl.textContent='Saving…';
+        const expiryDays=parseInt(document.getElementById('expiry').value)||3;
+        const expiresAt=expiryDays>0?new Date(Date.now()+expiryDays*86400000).toISOString():null;
+        let pwHash=null;
+        if(pwOn&&plan!=='free'){const pw=document.getElementById('transferPw').value;if(pw)pwHash=await hashPw(pw);}
+        const shareUrl=SITE+'/download.html?h='+handles[0].handle;
+        if(uid){for(const h of handles){await sb.from('transfers').insert({user_id:uid,filename:h.name,filesize:h.size,file_handle:h.handle,share_url:SITE+'/download.html?h='+h.handle,expires_at:expiresAt,password_hash:pwHash,download_count:0,message:document.getElementById('transferMsg').value||null});}}
+        if(uid&&plan==='free'){await loadUsage();updateLimitBars();}
+        prog.style.display='none';
+        ['dropZone','fileList','optionsCard','transferAction','limitsGrid','storageBar'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+        document.getElementById('limitWarn').classList.remove('show');
+        document.getElementById('shareLinkDisplay').textContent=shareUrl;
+        const em=document.getElementById('recipientEmail').value;
+        if(em)document.getElementById('successMsg').textContent='Link ready! Share it with '+em+'.'+(pwHash?' This link is password-protected.':'');
+        document.getElementById('successCard').classList.add('show');
+      }catch(err){
+        console.error(err);prog.style.display='none';btn.disabled=false;btn.textContent='⬆ Transfer files';
+        const e=document.getElementById('mainError');e.textContent='Upload failed: '+(err.message||'Please check your connection and try again.');e.className='alert alert-error show';
+      }
+    }
+
+    function copyLink(){const link=document.getElementById('shareLinkDisplay').textContent,btn=document.getElementById('copyBtn'),orig=btn.textContent;navigator.clipboard.writeText(link).then(()=>{btn.textContent='Copied!';btn.style.background='var(--green)';btn.style.color='#000';setTimeout(()=>{btn.textContent=orig;btn.style.background='';btn.style.color='';},2000);});}
+
+    function resetUpload(){
+      files=[];document.getElementById('fileList').innerHTML='';
+      ['dropZone','fileList'].forEach(id=>document.getElementById(id).style.display='block');
+      ['optionsCard','transferAction'].forEach(id=>document.getElementById(id).style.display='none');
+      document.getElementById('successCard').classList.remove('show');
+      document.getElementById('progBar').style.width='0%';document.getElementById('overallProg').style.display='none';
+      document.getElementById('transferBtn').disabled=false;document.getElementById('transferBtn').textContent='⬆ Transfer files';
+      document.getElementById('mainError').className='alert';document.getElementById('limitWarn').classList.remove('show');
+      pwOn=false;document.getElementById('pwToggle').classList.remove('on');document.getElementById('pwWrap').style.display='none';
+      if(plan==='free'&&uid){document.getElementById('limitsGrid').style.display='grid';document.getElementById('storageBar').style.display='block';}
+    }
+  </script>
+</body>
+</html>

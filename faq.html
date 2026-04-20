@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ — Sharekit</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="description" content="Frequently asked questions about Sharekit file sharing — how it works, pricing, security, and more."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0f0f5;--muted:#8888a0;--accent:#6c63ff;--accent2:#a78bfa;--green:#22d3a0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(10,10,15,0.85);backdrop-filter:blur(20px)}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.03em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+    .logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px var(--accent)}
+    .nav-links{display:flex;align-items:center;gap:1.8rem;list-style:none}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;transition:color 0.2s}
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0.6rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.9rem;cursor:pointer;text-decoration:none;transition:all 0.2s;border:none}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:hover{background:#7c74ff;transform:translateY(-1px)}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+    .btn-ghost:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+    main{padding-top:64px}
+    .hero{text-align:center;padding:5rem 2rem 3rem;max-width:700px;margin:0 auto}
+    .label{font-size:0.78rem;font-weight:600;color:var(--accent2);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem;display:block}
+    h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3rem);line-height:1.05;letter-spacing:-0.03em;margin-bottom:1rem}
+    .page{max-width:780px;margin:0 auto;padding:0 2rem 5rem}
+
+    /* SEARCH */
+    .faq-search{position:relative;margin-bottom:3rem}
+    .faq-search input{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:0.9rem 1rem 0.9rem 3rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color 0.2s}
+    .faq-search input:focus{border-color:var(--accent)}
+    .faq-search .icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1.1rem;pointer-events:none}
+
+    /* CATEGORIES */
+    .faq-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2.5rem}
+    .faq-cat{padding:6px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:100px;font-size:0.82rem;color:var(--muted);cursor:pointer;transition:all 0.2s}
+    .faq-cat:hover,.faq-cat.active{background:rgba(108,99,255,0.12);border-color:rgba(108,99,255,0.3);color:var(--accent2)}
+
+    /* FAQ ITEMS */
+    .faq-group{margin-bottom:2.5rem}
+    .faq-group-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--accent2);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+    .faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:border-color 0.2s}
+    .faq-item:hover{border-color:var(--border2)}
+    .faq-item.open{border-color:rgba(108,99,255,0.3)}
+    .faq-q{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.3rem;cursor:pointer;gap:1rem;background:var(--bg2)}
+    .faq-q:hover{background:var(--bg3)}
+    .faq-q-text{font-size:0.95rem;font-weight:500;line-height:1.4}
+    .faq-chevron{flex-shrink:0;color:var(--muted);transition:transform 0.25s;font-size:1.1rem}
+    .faq-item.open .faq-chevron{transform:rotate(180deg)}
+    .faq-a{display:none;padding:0 1.3rem 1.2rem;color:var(--muted);font-size:0.9rem;line-height:1.7;background:var(--bg2)}
+    .faq-a p{margin-bottom:0.7rem}
+    .faq-a p:last-child{margin-bottom:0}
+    .faq-a a{color:var(--accent2);text-decoration:none}
+    .faq-a a:hover{text-decoration:underline}
+    .faq-a ul{padding-left:1.2rem;margin-top:0.4rem}
+    .faq-a ul li{margin-bottom:0.3rem}
+    .faq-item.open .faq-a{display:block}
+
+    /* NO RESULTS */
+    .no-results{text-align:center;padding:3rem 2rem;color:var(--muted);display:none}
+
+    /* CTA */
+    .cta-strip{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2.5rem;text-align:center;margin-top:3rem}
+    .cta-strip h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;margin-bottom:0.5rem}
+    .cta-strip p{color:var(--muted);margin-bottom:1.5rem;font-size:0.9rem}
+
+    footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--muted);font-size:0.82rem}
+    footer a{color:var(--accent2);text-decoration:none;margin:0 8px}
+    @media(max-width:768px){.nav-links{display:none}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span class="logo-dot"></span>Sharekit</a>
+    <ul class="nav-links">
+      <li><a href="features.html">Features</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="faq.html" class="active">FAQ</a></li>
+    </ul>
+    <div style="display:flex;gap:10px;">
+      <a href="login.html" class="btn btn-ghost">Log in</a>
+      <a href="signup.html" class="btn btn-primary">Get started</a>
+    </div>
+  </nav>
+  <main>
+    <div class="hero">
+      <span class="label">FAQ</span>
+      <h1>Frequently asked questions</h1>
+      <p style="color:var(--muted);font-size:1rem;">Everything you need to know about Sharekit. Can't find your answer? <a href="mailto:support@sharekit.in" style="color:var(--accent2);">Contact us →</a></p>
+    </div>
+    <div class="page">
+      <div class="faq-search">
+        <span class="icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search questions…" oninput="filterFaq(this.value)" />
+      </div>
+
+      <div class="faq-cats">
+        <div class="faq-cat active" onclick="filterCat('all',this)">All questions</div>
+        <div class="faq-cat" onclick="filterCat('general',this)">General</div>
+        <div class="faq-cat" onclick="filterCat('uploads',this)">Uploads</div>
+        <div class="faq-cat" onclick="filterCat('pricing',this)">Pricing</div>
+        <div class="faq-cat" onclick="filterCat('security',this)">Security</div>
+        <div class="faq-cat" onclick="filterCat('account',this)">Account</div>
+      </div>
+
+      <div id="noResults" class="no-results">
+        <div style="font-size:2rem;margin-bottom:0.8rem;">🤔</div>
+        <p>No questions found. Try a different search term.</p>
+      </div>
+
+      <!-- GENERAL -->
+      <div class="faq-group" data-cat="general">
+        <div class="faq-group-title">General</div>
+
+        <div class="faq-item" data-q="what is sharekit how does it work">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">What is Sharekit and how does it work?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Sharekit is a web-based file sharing service that lets you send any type of file to anyone, from any device, with no app download required. It works entirely in your browser.</p>
+            <p>To share a file: go to <a href="upload.html">sharekit.in/upload</a>, drop your files, set your options (expiry, password), and click Transfer. You'll get a shareable link that anyone can use to download your files.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="do i need to create account">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Do I need to create an account to use Sharekit?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>No! You can share files without creating an account. Just go to the upload page and start transferring.</p>
+            <p>However, creating a free account gives you extra benefits: a dashboard to track all your transfers, transfer history, and the ability to manage your links. Sign up takes less than 30 seconds.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="what devices browsers work with sharekit">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">What devices and browsers does Sharekit work with?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Sharekit works on any device with a modern browser:</p>
+            <ul>
+              <li>Android (Chrome, Firefox, Samsung Browser, Opera)</li>
+              <li>iPhone and iPad (Safari, Chrome)</li>
+              <li>Windows, Mac, Linux (all major browsers)</li>
+            </ul>
+            <p>No plugins, no extensions, no downloads needed. If your browser can open websites, it can use Sharekit.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="how many languages does sharekit support">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">How many languages does Sharekit support?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Sharekit supports 50+ languages. Currently fully translated: English, हिन्दी (Hindi), বাংলা (Bengali), Español, Français, Deutsch, Português, Русский, العربية, and 中文.</p>
+            <p>Click the language button in the navigation to switch instantly. Your preference is saved automatically. We're adding more languages every month.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOADS -->
+      <div class="faq-group" data-cat="uploads">
+        <div class="faq-group-title">Uploads &amp; transfers</div>
+
+        <div class="faq-item" data-q="what file types can i share upload">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">What file types can I share?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>All file types are supported. This includes:</p>
+            <ul>
+              <li>Images: JPG, JPEG, PNG, GIF, HEIC, WebP, SVG and more</li>
+              <li>Videos: MP4, MKV, AVI, MOV, WMV and more</li>
+              <li>Audio: MP3, WAV, AAC, M4A, FLAC, OGG and more</li>
+              <li>Documents: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, CSV</li>
+              <li>Compressed: ZIP, RAR, 7Z, TAR, GZ</li>
+              <li>Apps: APK (Android), IPA (iOS)</li>
+              <li>Any other file type not listed above</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="what is maximum file size limit">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">What is the maximum file size I can share?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>There is no single file size limit — instead there is a monthly storage quota based on your plan:</p>
+            <ul>
+              <li>Free plan: 3 GB total per month</li>
+              <li>Pro plan: 500 GB total per month</li>
+              <li>Unlimited plan: No limits at all</li>
+            </ul>
+            <p>So on the free plan, you could share one 3 GB file, or thirty 100 MB files — as long as the total doesn't exceed 3 GB for that month.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="what happens if my transfer is interrupted connection drops">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">What happens if my transfer gets interrupted?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Sharekit supports resumable uploads. If your internet connection drops during an upload, the transfer will pause automatically. When your connection comes back, you can resume the upload from the exact point it stopped — you don't need to start over.</p>
+            <p>This is especially useful for large video files on slow or unstable connections.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="how long does the share link last expiry">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">How long does a share link last?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>It depends on your plan:</p>
+            <ul>
+              <li>Free plan: Links expire after 3 days</li>
+              <li>Pro plan: Links expire after up to 30 days (you choose when creating the transfer)</li>
+              <li>Unlimited plan: Links never expire</li>
+            </ul>
+            <p>After a link expires, the files are permanently deleted from our servers for security.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="can recipient download without account login">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Does the recipient need a Sharekit account to download?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>No. The person receiving your files does not need a Sharekit account. They just need the share link. They open it in any browser and click Download — that's it.</p>
+            <p>If the transfer is password-protected, they will need to enter the password, but still no account required.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="can I send multiple files at once">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Can I send multiple files at once?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Yes! You can select and upload multiple files at the same time. Each file gets its own share link, or you can bundle them. The Unlimited plan allows sending to up to 5 devices simultaneously.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRICING -->
+      <div class="faq-group" data-cat="pricing">
+        <div class="faq-group-title">Pricing &amp; plans</div>
+
+        <div class="faq-item" data-q="is sharekit really free no credit card">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Is Sharekit really free? No hidden charges?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Yes, the Free plan is completely free — forever. You get 3 GB of transfers per month, support for all file types, and 3-day link expiry at no cost.</p>
+            <p>No credit card is required. We won't ask for payment unless you choose to upgrade to Pro or Unlimited.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="how do I pay UPI Paytm PhonePe card">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">How do I pay? What payment methods are accepted?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>We use Cashfree for payments, which supports all major Indian payment methods:</p>
+            <ul>
+              <li>UPI (Google Pay, PhonePe, Paytm, BHIM, any UPI app)</li>
+              <li>Credit and debit cards (Visa, Mastercard, RuPay)</li>
+              <li>Net banking</li>
+              <li>Wallets (Paytm, Amazon Pay, etc.)</li>
+            </ul>
+            <p>All payments are processed in Indian Rupees (₹).</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="can I cancel my subscription anytime refund">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Can I cancel my subscription? Any refund?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Yes, you can contact us at <a href="mailto:support@sharekit.in">support@sharekit.in</a> to cancel your subscription at any time. You will continue to have access until the end of your current billing period.</p>
+            <p>For refund requests within 7 days of payment, email us and we'll review the request. Refunds are handled on a case-by-case basis.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="difference between pro and unlimited plan">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">What's the difference between Pro and Unlimited?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Both Pro and Unlimited include password protection and all features. The key differences are:</p>
+            <ul>
+              <li>Pro: 500 GB/month storage, 30-day expiry, 10,000 transfers per category</li>
+              <li>Unlimited: No storage limit, no transfer limits, no expiry date, and the ability to send to 5 devices simultaneously</li>
+            </ul>
+            <p>Pro is perfect for individual power users. Unlimited is for companies, teams, or people who share files professionally every day.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="faq-group" data-cat="security">
+        <div class="faq-group-title">Security &amp; privacy</div>
+
+        <div class="faq-item" data-q="is sharekit safe secure encryption">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Is Sharekit safe? How are my files protected?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Yes. Sharekit uses industry-standard security measures:</p>
+            <ul>
+              <li>All files are encrypted in transit using TLS 1.3 (HTTPS)</li>
+              <li>Files at rest are encrypted using AES-256</li>
+              <li>Every uploaded file is automatically scanned for malware and viruses</li>
+              <li>We never read or access your files</li>
+              <li>Files are permanently deleted after the link expiry date</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="does sharekit sell data advertising tracking">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Does Sharekit sell my data or show ads?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Never. Sharekit does not show advertisements, track your files, or sell your personal data to any third party. Our only source of revenue is subscription payments from Pro and Unlimited users.</p>
+            <p>See our <a href="privacy.html">Privacy Policy</a> for full details.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="how does password protection work">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">How does password protection work?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>When you enable password protection on a transfer (Pro/Unlimited), you set a password of your choice. The password is hashed using SHA-256 before being stored — we never store plain-text passwords.</p>
+            <p>When a recipient opens the share link, they see a password entry screen. Only if they enter the correct password will they be able to download the files. The link itself gives no information about the files.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="faq-group" data-cat="account">
+        <div class="faq-group-title">Account &amp; settings</div>
+
+        <div class="faq-item" data-q="how do i reset my password">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">How do I reset my password?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>Go to the <a href="login.html">login page</a> and click "Forgot password?" under the password field. Enter your email address and we'll send you a reset link. Check your spam folder if you don't see it within a few minutes.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="can I change my email address">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">Can I change my email address or name?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>You can change your display name in the <a href="dashboard.html">Dashboard → Settings</a> tab. For email address changes, please contact us at <a href="mailto:support@sharekit.in">support@sharekit.in</a> with your request.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" data-q="how do i delete my account">
+          <div class="faq-q" onclick="toggle(this)">
+            <span class="faq-q-text">How do I delete my account?</span>
+            <span class="faq-chevron">▾</span>
+          </div>
+          <div class="faq-a">
+            <p>To delete your account and all associated data, send an email to <a href="mailto:support@sharekit.in">support@sharekit.in</a> with the subject "Delete my account". We will process the deletion within 7 business days and send you a confirmation.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-strip">
+        <h3>Still have questions?</h3>
+        <p>Our support team is ready to help. Email us and we'll get back to you within 24 hours.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="mailto:support@sharekit.in" class="btn btn-primary">Email support</a>
+          <a href="upload.html" class="btn btn-ghost">Try Sharekit free →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+    <br/><br/>
+    &copy; 2025 Sharekit.in · Made in India 🇮🇳
+  </footer>
+
+  <script>
+    function toggle(el) {
+      const item = el.closest('.faq-item');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    }
+
+    function filterCat(cat, btn) {
+      document.querySelectorAll('.faq-cat').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.faq-group').forEach(g => {
+        g.style.display = (cat === 'all' || g.dataset.cat === cat) ? 'block' : 'none';
+      });
+      document.getElementById('searchInput').value = '';
+    }
+
+    function filterFaq(query) {
+      const q = query.toLowerCase().trim();
+      let visible = 0;
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const text = item.dataset.q + ' ' + item.querySelector('.faq-q-text').textContent.toLowerCase();
+        const show = !q || text.includes(q);
+        item.style.display = show ? 'block' : 'none';
+        if (show) visible++;
+      });
+      document.querySelectorAll('.faq-group').forEach(g => {
+        const anyVisible = Array.from(g.querySelectorAll('.faq-item')).some(i => i.style.display !== 'none');
+        g.style.display = anyVisible ? 'block' : 'none';
+      });
+      document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+      // Reset cat buttons
+      document.querySelectorAll('.faq-cat').forEach(b => b.classList.remove('active'));
+      document.querySelector('.faq-cat').classList.add('active');
+    }
+  </script>
+</body>
+</html>

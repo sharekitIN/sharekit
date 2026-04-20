@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — Sharekit</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="description" content="Sharekit is a file sharing service built in India for everyone. Learn about our mission, values, and story."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0f0f5;--muted:#8888a0;--accent:#6c63ff;--accent2:#a78bfa;--green:#22d3a0}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(10,10,15,0.85);backdrop-filter:blur(20px)}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.03em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+    .logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px var(--accent)}
+    .nav-links{display:flex;align-items:center;gap:1.8rem;list-style:none}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;transition:color 0.2s}
+    .nav-links a:hover{color:var(--text)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0.6rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.9rem;cursor:pointer;text-decoration:none;transition:all 0.2s;border:none}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:hover{background:#7c74ff;transform:translateY(-1px)}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+    .btn-ghost:hover{color:var(--text)}
+    .btn-lg{padding:0.9rem 2rem;font-size:1rem}
+    main{padding-top:64px}
+    .label{font-size:0.78rem;font-weight:600;color:var(--accent2);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem;display:block}
+    h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2.2rem,4vw,3.4rem);line-height:1.05;letter-spacing:-0.03em}
+    h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;letter-spacing:-0.03em;margin-bottom:1rem}
+    h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:0.5rem}
+    p{line-height:1.75;color:var(--muted);font-size:0.95rem;margin-bottom:1rem}
+    p:last-child{margin-bottom:0}
+    .section{padding:5rem 2rem;max-width:800px;margin:0 auto}
+    .hero{text-align:center;padding:5rem 2rem 4rem;max-width:700px;margin:0 auto}
+    .hero h1{margin-bottom:1.2rem}
+    .hero p{color:var(--muted);font-size:1.05rem;font-weight:300;max-width:580px;margin:0 auto}
+    .divider{border:none;border-top:1px solid var(--border);margin:3rem 0}
+    .values-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin:2rem 0}
+    .value-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem}
+    .value-icon{font-size:1.8rem;margin-bottom:0.8rem}
+    .value-card h3{color:var(--text)}
+    .value-card p{font-size:0.88rem}
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin:2rem 0;text-align:center}
+    .stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.5rem}
+    .stat-n{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;letter-spacing:-0.04em;color:var(--accent2)}
+    .stat-l{font-size:0.82rem;color:var(--muted);margin-top:4px}
+    .team-note{background:rgba(108,99,255,0.07);border:1px solid rgba(108,99,255,0.2);border-radius:16px;padding:2rem;margin:2rem 0}
+    .team-note p{color:var(--text);font-size:1rem;font-weight:300;line-height:1.7}
+    .cta-strip{text-align:center;padding:3rem 2rem;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:3rem}
+    .cta-strip h2{font-size:1.6rem;margin-bottom:0.6rem}
+    .cta-strip p{margin-bottom:1.5rem;font-size:0.9rem}
+    footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--muted);font-size:0.82rem}
+    footer a{color:var(--accent2);text-decoration:none;margin:0 8px}
+    .fade-up{opacity:0;transform:translateY(20px);transition:opacity 0.55s ease,transform 0.55s ease}
+    .fade-up.visible{opacity:1;transform:translateY(0)}
+    @media(max-width:768px){.nav-links{display:none}.stat-row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span class="logo-dot"></span>Sharekit</a>
+    <ul class="nav-links">
+      <li><a href="features.html">Features</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="faq.html">FAQ</a></li>
+    </ul>
+    <div style="display:flex;gap:10px;">
+      <a href="login.html" class="btn btn-ghost">Log in</a>
+      <a href="signup.html" class="btn btn-primary">Get started free</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero fade-up">
+      <span class="label">About Sharekit</span>
+      <h1>Built in India, for everyone</h1>
+      <p>Sharekit started with one simple question: why is sharing a file still so complicated in 2025? We built the answer.</p>
+    </div>
+
+    <section class="section fade-up">
+      <h2>Our story</h2>
+      <p>Sharing files should be as simple as handing something to a friend. But for most people, it means struggling with USB cables, WhatsApp compression destroying video quality, email attachment limits, or confusing apps that require both people to install something.</p>
+      <p>Sharekit was built to fix this. A lightweight, fast, secure web app that works on literally any device with a browser. No app to install, no account required to receive files, no complicated setup. Just drag, drop, and share.</p>
+      <p>We're a small, independent team based in India, building tools that work for real people — students sending assignments, professionals sharing large presentations, families sharing holiday photos, and businesses transferring critical documents.</p>
+
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-n">50+</div><div class="stat-l">Languages supported</div></div>
+        <div class="stat-box"><div class="stat-n">3</div><div class="stat-l">Plans — including free forever</div></div>
+        <div class="stat-box"><div class="stat-n">100%</div><div class="stat-l">Encrypted, always</div></div>
+      </div>
+
+      <hr class="divider"/>
+      <h2>Our mission</h2>
+      <p>To make file sharing so simple and private that anyone — from a 60-year-old parent to a professional developer — can use it without a tutorial.</p>
+      <p>We believe your files are your business. We don't read them, we don't sell your data, and we don't show you ads. Our only business model is a fair subscription for users who need more storage and more features. That's it.</p>
+
+      <hr class="divider"/>
+      <h2>Our values</h2>
+      <div class="values-grid">
+        <div class="value-card"><div class="value-icon">🔒</div><h3>Privacy first</h3><p>Your files are encrypted end-to-end. We never access your content, and we permanently delete files after their expiry date.</p></div>
+        <div class="value-card"><div class="value-icon">⚡</div><h3>Speed matters</h3><p>Transfers start instantly. Our infrastructure uses a global CDN so your files reach recipients fast, no matter where they are.</p></div>
+        <div class="value-card"><div class="value-icon">🌍</div><h3>Accessible to all</h3><p>50+ languages, works on any browser, free tier available forever. File sharing shouldn't be a privilege for those who can pay.</p></div>
+        <div class="value-card"><div class="value-icon">🤝</div><h3>Honest pricing</h3><p>No dark patterns, no surprise charges, no feature lockouts designed to manipulate you. Upgrade only if you genuinely need more.</p></div>
+      </div>
+
+      <hr class="divider"/>
+      <h2>Contact us</h2>
+      <p>We're a small team and we read every email. If you have a question, suggestion, or problem — reach out directly.</p>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
+        <div style="display:flex;align-items:center;gap:12px;font-size:0.9rem;"><span style="font-size:1.2rem;">📧</span><div><div style="font-weight:500;color:var(--text);">Email support</div><a href="mailto:support@sharekit.in" style="color:var(--accent2);font-size:0.85rem;text-decoration:none;">support@sharekit.in</a></div></div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:0.9rem;"><span style="font-size:1.2rem;">🌐</span><div><div style="font-weight:500;color:var(--text);">Website</div><a href="https://sharekit.in" style="color:var(--accent2);font-size:0.85rem;text-decoration:none;">sharekit.in</a></div></div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:0.9rem;"><span style="font-size:1.2rem;">📍</span><div><div style="font-weight:500;color:var(--text);">Based in</div><span style="color:var(--muted);font-size:0.85rem;">India 🇮🇳</span></div></div>
+      </div>
+    </section>
+
+    <div class="cta-strip fade-up">
+      <h2>Try Sharekit for free</h2>
+      <p>No account needed. 3 GB free every month.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="upload.html" class="btn btn-primary btn-lg">⬆ Share a file now</a>
+        <a href="signup.html" class="btn btn-ghost btn-lg">Create free account</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="index.html">Home</a><a href="features.html">Features</a><a href="pricing.html">Pricing</a>
+    <a href="faq.html">FAQ</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a>
+    <br/><br/>&copy; 2025 Sharekit.in · Made with care in India 🇮🇳
+  </footer>
+  <script>
+    const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:0.08});
+    document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+  </script>
+</body>
+</html>
