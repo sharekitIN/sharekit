@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
-  <rect width="400" height="100" rx="0" fill="#ffffff"/>
-  <circle cx="32" cy="50" r="8" fill="#6c63ff"/>
-  <circle cx="32" cy="50" r="16" fill="none" stroke="#6c63ff" stroke-width="1.8" stroke-opacity="0.35"/>
-  <text x="58" y="67" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" fill="#0a0a0f" letter-spacing="-1">Sharekit</text>
-</svg>
